@@ -1,11 +1,25 @@
 import "./App.css";
+import NavBar from "./components/navbar/NavBar";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./Layout/Layout";
 
 function App() {
-  return (
-    <div className="App">
-      <p>First Commit</p>
-    </div>
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <Layout
+        />
+      ),
+      children: [
+        {
+          path: "*",
+          element: <NavBar />,
+        },
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;
