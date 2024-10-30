@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import "../navbar/NavBar.css";
 import {
   AppBar,
   Toolbar,
@@ -55,7 +54,13 @@ export default function NavBar() {
         {isMatch ? (
           <>
             <Box display="flex" alignItems="center" width="100%">
-              <img className="navbar-logo" src={logo} alt="Logo" />
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  height: "60px",
+                }}
+              />
               <Box marginLeft="auto">
                 <DrawerComp />
               </Box>
@@ -63,7 +68,13 @@ export default function NavBar() {
           </>
         ) : (
           <Box display="flex" alignItems="center" width="100%">
-            <img className="navbar-logo" src={logo} alt="Logo" />
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                height: "80px",
+              }}
+            />{" "}
             <Tabs
               value={value}
               onChange={(e, value) => setValue(value)}
@@ -72,7 +83,6 @@ export default function NavBar() {
               {PAGES.map((page, index) => (
                 <Tab key={index} label={page} sx={tabStyles} />
               ))}
-              
             </Tabs>
             <Box marginLeft="auto">
               <Button sx={buttonStyles} variant="contained">
