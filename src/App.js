@@ -2,8 +2,11 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import HomePage from "./pages/HomePage";
+import ExploreArtwork from "../src/components/ExploreArtwork/ExploreArtwork";
+import { useState } from "react";
 
 function App() {
+  const [category, setCategory] = useState("All");
   const router = createBrowserRouter([
     {
       path: "/",
@@ -11,7 +14,9 @@ function App() {
       children: [
         {
           index: true,
-          element: <HomePage />,
+          element: (
+            <ExploreArtwork category={category} setCategory={setCategory} />
+          ),
         },
         {
           path: "/home",

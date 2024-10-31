@@ -1,0 +1,96 @@
+/* ExploreArtwork.css */
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Outfit:wght@100..900&display=swap');
+
+
+.explore-artwork {
+    text-align: center;
+    padding-top: 6rem;
+}
+
+.explore-artwork h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Outfit', sans-serif;
+
+}
+
+.explore-artwork-text {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+    color: #555;
+    font-family: 'Lato', sans-serif;
+}
+
+.explore-artwork-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 300px;
+    overflow-x: scroll;
+}
+
+.explore-artwork-list::-webkit-scrollbar {
+    display: none;
+}
+
+.explore-artwork-list-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 120px;
+    margin: 0 2rem;
+}
+
+.explore-artwork-list-item .active {
+    border: 4px solid #603813;
+    padding: 2px;
+}
+
+.explore-artwork-list-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.explore-artwork-list-item img:hover {
+    transform: scale(1.1);
+}
+
+.explore-artwork-list-item p {
+    margin-top: 0.9rem;
+    font-size: 1rem;
+    color: #000;
+    font-weight: 600;
+}
+
+.explore-artwork hr {
+    margin: 10px 20%;
+    height: 2px;
+    background-color: #A5978B;
+    border: none;
+
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .explore-artwork-list-item {
+        max-width: 80px;
+    }
+
+    .explore-artwork-list-item img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .explore-artwork h1 {
+        font-size: 2rem;
+    }
+
+    .explore-artwork-text {
+        font-size: 1rem;
+    }
+}
