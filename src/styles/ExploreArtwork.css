@@ -77,6 +77,10 @@
 
 /* Responsive Styles */
 @media (max-width: 768px) {
+    .explore-artwork-list {
+        margin: 5px 20px;
+    }
+
     .explore-artwork-list-item {
         max-width: 80px;
     }
@@ -92,5 +96,25 @@
 
     .explore-artwork-text {
         font-size: 1rem;
+    }
+
+    .explore-artwork-list-item p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .explore-artwork-list {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0 10px;
+    }
+
+    .explore-artwork-list-item {
+        margin: 0 1rem;
+    }
+
+    .explore-artwork-list-item p {
+        font-size: 0.5rem;
     }
 }
