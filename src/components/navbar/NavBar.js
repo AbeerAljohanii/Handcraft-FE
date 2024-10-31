@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import {
   AppBar,
@@ -9,7 +8,6 @@ import {
   Button,
   useMediaQuery,
   useTheme,
-  Typography,
   Box,
 } from "@mui/material";
 import DrawerComp from "./CustomDrawer";
