@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import LoginIcon from "@mui/icons-material/Login"; 
+import LoginIcon from "@mui/icons-material/Login";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {
   Drawer,
@@ -10,10 +10,18 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 function DrawerComp() {
   const [openDrawer, setOpenDrawer] = useState(false);
-  const PAGES = ["Shop Artwork", "Workshop", "About Us", "Contact Us"];
+
+  const PAGES = [
+    { label: "Home", path: "/" },
+    { label: "Shop Artwork", path: "/artworks" },
+    { label: "Workshop", path: "/workshops" },
+    { label: "About Us", path: "/aboutUs" },
+    { label: "Contact Us", path: "/contactUs" },
+  ];
   const SignInUpStyles = {
     backgroundColor: "#603813",
     color: "white",
@@ -37,6 +45,8 @@ function DrawerComp() {
         <List>
           {PAGES.map((page, index) => (
             <ListItemButton
+              component={Link}
+              to={page.path}
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -45,7 +55,7 @@ function DrawerComp() {
               onClick={() => setOpenDrawer(false)}
               key={index}
             >
-              <ListItemText primary={page} />
+              <ListItemText primary={page.label} />
             </ListItemButton>
           ))}
           <ListItemButton

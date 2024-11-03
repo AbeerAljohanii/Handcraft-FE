@@ -11,6 +11,7 @@ import {
   Box,
 } from "@mui/material";
 import DrawerComp from "./CustomDrawer";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const tabStyles = {
   color: "black",
@@ -40,12 +41,19 @@ const indicatorStyles = {
   marginLeft: "3%",
 };
 
-const PAGES = ["Shop Artwork", "Workshop", "About Us", "Contact Us"];
+const PAGES = [
+  { label: "Home", path: "/" },
+  { label: "Shop Artwork", path: "/artworks" },
+  { label: "Workshop", path: "/workshops" },
+  { label: "About Us", path: "/aboutUs" },
+  { label: "Contact Us", path: "/contactUs" },
+];
 
 export default function NavBar() {
   const [value, setValue] = useState(0);
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("lg"));
+
   return (
     <AppBar sx={{ background: "#F2E9E4" }}>
       <Toolbar>
@@ -72,14 +80,20 @@ export default function NavBar() {
               style={{
                 height: "80px",
               }}
-            />{" "}
+            />
             <Tabs
               value={value}
               onChange={(e, value) => setValue(value)}
               sx={indicatorStyles}
             >
               {PAGES.map((page, index) => (
-                <Tab key={index} label={page} sx={tabStyles} />
+                <Tab
+                  key={index}
+                  label={page.label}
+                  sx={tabStyles}
+                  component={Link}
+                  to={page.path}
+                />
               ))}
             </Tabs>
             <Box marginLeft="auto">

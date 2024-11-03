@@ -4,6 +4,8 @@ import "./Artwork.css";
 import ExploreArtwork from "../ExploreArtwork/ExploreArtwork";
 
 export default function Artworks({
+  category,
+  setCategory,
   totalCount,
   handleChange,
   page,
@@ -11,7 +13,7 @@ export default function Artworks({
 }) {
   return (
     <div className="artworks-container">
-      <ExploreArtwork />
+      <ExploreArtwork category={category} setCategory={setCategory} />
       <div className="artworks-content">
         <div className="products-section">
           <h2 className="products-title">Available Artworks</h2>

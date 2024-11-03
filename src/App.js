@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 function App() {
+  const [userInput, setUserInput] = useState("");
   const [page, setPage] = useState(1);
   const handleChange = (event, value) => {
     setPage(value);
@@ -24,12 +25,19 @@ function App() {
   // page number (page-1)* page size
   let pageSize = 8;
   let pageNumber = page;
-  const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
+  // const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${userInput}&sortOrder=price_desc`;
+
+  // avoid an error - userinput = null
+
+  function getUrl(userInput) {
+    const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
+    if (userInput) {
+      artworkApi += `&search=${userInput}`;
+    }
+  }
 
   console.log("Current Page:", page);
   console.log("Page Number:", pageNumber);
-  console.log("API URL:", artworkApi);
-
   // const [loading, setLoading] = useState(true);
 
   // logic for send request to th server:
@@ -39,7 +47,7 @@ function App() {
 
   function getData() {
     axios
-      .get(artworkApi)
+      .get(getUrl(userInput))
       .then((response) => {
         setArtworkResponse(response.data);
       })
@@ -61,14 +69,14 @@ function App() {
       children: [
         {
           index: true,
-          element: (
-            <ExploreArtwork category={category} setCategory={setCategory} />
-          ),
+          element: <HomePage />,
         },
         {
           path: "artworks",
           element: (
             <Artworks
+              category={category}
+              setCategory={setCategory}
               totalCount={artworkResponse.totalCount}
               page={page}
               handleChange={handleChange}
