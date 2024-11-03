@@ -3,18 +3,33 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import HomePage from "./pages/HomePage";
 import ExploreArtwork from "../src/components/ExploreArtwork/ExploreArtwork";
+import Artworks from "./components/artworks/Artworks";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 function App() {
-  const url = "http://localhost:5125/"; // http://localhost:5125
-  const artworkApi = "http://localhost:5125/api/v1/artworks";
-  const [artworkList, setArtworkList] = useState({
-    products: [],
+  const [page, setPage] = useState(1);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+  const [artworkResponse, setArtworkResponse] = useState({
+    artworks: [],
     totalCount: 0,
   });
   const [category, setCategory] = useState("All");
-  const [response, setResponse] = useState("");
+
+  // http://localhost:5125
+
+  // page size 5 (number of artworks)
+  // page number (page-1)* page size
+  let pageSize = 8;
+  let pageNumber = page;
+  const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
+
+  console.log("Current Page:", page);
+  console.log("Page Number:", pageNumber);
+  console.log("API URL:", artworkApi);
+
   // const [loading, setLoading] = useState(true);
 
   // logic for send request to th server:
@@ -26,8 +41,7 @@ function App() {
     axios
       .get(artworkApi)
       .then((response) => {
-        console.log(response.data);
-        setResponse(response.data);
+        setArtworkResponse(response.data);
       })
       .catch((error) => {
         console.log("error");
@@ -36,7 +50,9 @@ function App() {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [pageNumber]);
+
+  console.log(artworkResponse);
 
   const router = createBrowserRouter([
     {
@@ -47,6 +63,17 @@ function App() {
           index: true,
           element: (
             <ExploreArtwork category={category} setCategory={setCategory} />
+          ),
+        },
+        {
+          path: "artworks",
+          element: (
+            <Artworks
+              totalCount={artworkResponse.totalCount}
+              page={page}
+              handleChange={handleChange}
+              artworkList={artworkResponse.artworks}
+            />
           ),
         },
         {
