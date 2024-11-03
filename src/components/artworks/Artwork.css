@@ -6,9 +6,6 @@
     padding-top: 6rem;
 }
 
-
-
-
 .artworks-content {
     display: flex;
     flex-direction: column;
@@ -21,6 +18,7 @@
     margin: 0 auto;
 }
 
+
 .products-title {
     font-size: 2rem;
     margin-bottom: 1rem;
@@ -28,12 +26,16 @@
 }
 
 .products-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 1.5rem;
 }
 
 .product-item {
+    flex: 0 0 300px;
+    max-width: 100%;
     background: white;
     border: 1px solid #ddd;
     border-radius: 8px;

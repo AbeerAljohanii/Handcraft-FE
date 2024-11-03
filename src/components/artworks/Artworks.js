@@ -10,6 +10,7 @@ export default function Artworks({
   handleChange,
   page,
   artworkList,
+  artworksPerPage,
 }) {
   return (
     <div className="artworks-container">
@@ -36,6 +37,7 @@ export default function Artworks({
           totalCount={totalCount}
           page={page}
           handleChange={handleChange}
+          artworksPerPage={artworksPerPage}
         />
       </div>
     </div>

@@ -23,17 +23,18 @@ function App() {
 
   // page size 5 (number of artworks)
   // page number (page-1)* page size
-  let pageSize = 8;
+  let pageSize = 2;
   let pageNumber = page;
   // const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${userInput}&sortOrder=price_desc`;
 
   // avoid an error - userinput = null
 
   function getUrl(userInput) {
-    const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
+    const artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
     if (userInput) {
-      artworkApi += `&search=${userInput}`;
+      artworkUrl += `&search=${userInput}`;
     }
+    return artworkUrl;
   }
 
   console.log("Current Page:", page);
@@ -81,6 +82,7 @@ function App() {
               page={page}
               handleChange={handleChange}
               artworkList={artworkResponse.artworks}
+              artworksPerPage={pageSize}
             />
           ),
         },
