@@ -9,6 +9,10 @@ import axios from "axios";
 
 function App() {
   const [userInput, setUserInput] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const handleChange = (event, value) => {
     setPage(value);
@@ -25,41 +29,45 @@ function App() {
   // page number (page-1)* page size
   let pageSize = 2;
   let pageNumber = page;
-  // const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${userInput}&sortOrder=price_desc`;
-
-  // avoid an error - userinput = null
 
   function getUrl(userInput) {
-    const artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&sortOrder=price_desc`;
+    let artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&lowPrice=${minPrice}&highPrice=${maxPrice}`;
     if (userInput) {
       artworkUrl += `&search=${userInput}`;
     }
     return artworkUrl;
   }
-
-  console.log("Current Page:", page);
-  console.log("Page Number:", pageNumber);
-  // const [loading, setLoading] = useState(true);
-
+  // const artworkApi = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${userInput}&sortOrder=price_desc`;
   // logic for send request to th server:
   // 1. url
   // 2. method: get/post/put/delete
   // 3. response
 
   function getData() {
+    setLoading(true);
     axios
       .get(getUrl(userInput))
       .then((response) => {
         setArtworkResponse(response.data);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log("error");
+        setError(error);
+        setLoading(false);
       });
   }
 
   useEffect(() => {
     getData();
-  }, [pageNumber]);
+  }, [pageNumber, userInput, minPrice, maxPrice]);
+
+  // if (loading) {
+  //   return <div> Please wait 1 second </div>;
+  // }
+
+  // if (error) {
+  //   return <div> {error.message}</div>;
+  // }
 
   console.log(artworkResponse);
 
@@ -83,6 +91,10 @@ function App() {
               handleChange={handleChange}
               artworkList={artworkResponse.artworks}
               artworksPerPage={pageSize}
+              setUserInput={setUserInput}
+              userInput={userInput}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
             />
           ),
         },

@@ -2,6 +2,8 @@ import React from "react";
 import ArtworkPagination from "./ArtworkPagination";
 import "./Artwork.css";
 import ExploreArtwork from "../ExploreArtwork/ExploreArtwork";
+import Form from "../form/Form";
+import PriceRangeForm from "../form/PriceRangeForm";
 
 export default function Artworks({
   category,
@@ -11,10 +13,16 @@ export default function Artworks({
   page,
   artworkList,
   artworksPerPage,
+  setUserInput,
+  userInput,
+  setMinPrice,
+  setMaxPrice,
 }) {
   return (
     <div className="artworks-container">
       <ExploreArtwork category={category} setCategory={setCategory} />
+      <Form setUserInput={setUserInput} />
+      <PriceRangeForm setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
       <div className="artworks-content">
         <div className="products-section">
           <h2 className="products-title">Available Artworks</h2>
@@ -38,6 +46,7 @@ export default function Artworks({
           page={page}
           handleChange={handleChange}
           artworksPerPage={artworksPerPage}
+          userInput={userInput}
         />
       </div>
     </div>
