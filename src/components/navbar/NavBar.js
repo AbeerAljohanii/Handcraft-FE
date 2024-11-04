@@ -14,7 +14,6 @@ import DrawerComp from "./CustomDrawer";
 import { Link } from "react-router-dom"; // Import Link for navigation
 
 const tabStyles = {
-  color: "black",
   textTransform: "none",
   fontWeight: "bold",
   fontSize: 19,
@@ -86,9 +85,9 @@ export default function NavBar() {
               onChange={(e, value) => setValue(value)}
               sx={indicatorStyles}
             >
-              {PAGES.map((page, index) => (
+              {PAGES.map((page) => (
                 <Tab
-                  key={index}
+                  key={page.path}
                   label={page.label}
                   sx={tabStyles}
                   component={Link}

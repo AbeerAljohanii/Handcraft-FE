@@ -43,7 +43,7 @@ function DrawerComp() {
         }}
       >
         <List>
-          {PAGES.map((page, index) => (
+          {PAGES.map((page) => (
             <ListItemButton
               component={Link}
               to={page.path}
@@ -53,7 +53,7 @@ function DrawerComp() {
                 alignItems: "center",
               }}
               onClick={() => setOpenDrawer(false)}
-              key={index}
+              key={page.path}
             >
               <ListItemText primary={page.label} />
             </ListItemButton>
