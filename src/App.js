@@ -2,8 +2,8 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Layout/Layout";
 import HomePage from "./pages/HomePage";
-import ExploreArtwork from "../src/components/ExploreArtwork/ExploreArtwork";
 import Artworks from "./components/artworks/Artworks";
+import ArtworkDetail from "./components/artworkDetail/ArtworkDetails";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -97,6 +97,10 @@ function App() {
               setMaxPrice={setMaxPrice}
             />
           ),
+        },
+        {
+          path: "artworks/:artworkId",
+          element: <ArtworkDetail />,
         },
         {
           path: "/home",

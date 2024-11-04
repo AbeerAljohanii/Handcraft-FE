@@ -1,4 +1,4 @@
-/* product styling here */
+/* artwork styling here */
 .artworks-container {
     padding: 2rem;
     background-color: #f9f9f9;
@@ -12,20 +12,19 @@
     align-items: center;
 }
 
-.products-section {
+.artworks-section {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-
-.products-title {
+.artworks-title {
     font-size: 2rem;
     margin-bottom: 1rem;
     color: #333;
 }
 
-.products-list {
+.artworks-list {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,7 +32,7 @@
     gap: 1.5rem;
 }
 
-.product-item {
+.artwork-item {
     flex: 0 0 300px;
     max-width: 100%;
     background: white;
@@ -42,25 +41,26 @@
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
+    text-decoration: none;
+    color: inherit;
 }
 
-.product-item:hover {
+.artwork-item:hover {
     transform: translateY(-5px);
 }
 
-.product-title {
+.artwork-title {
     font-size: 1.5rem;
     color: #333;
 }
 
-.product-description {
+.artwork-description {
     font-size: 1rem;
     color: #555;
     margin: 0.5rem 0;
 }
 
-.product-price {
+.artwork-price {
     font-size: 1.2rem;
     color: #007bff;
-    /* Bootstrap primary color */
 }
