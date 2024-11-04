@@ -6,6 +6,8 @@ import Artworks from "./components/artworks/Artworks";
 import ArtworkDetail from "./components/artworkDetail/ArtworkDetails";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import UserLogin from "./components/user/UserLogin";
+import UserRegister from "./components/user/UserRegister";
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -105,6 +107,14 @@ function App() {
         {
           path: "/home",
           element: <HomePage />,
+        },
+        {
+          path: "signin",
+          element: <UserLogin />,
+        },
+        {
+          path: "signup",
+          element: <UserRegister />,
         },
         {
           path: "*",

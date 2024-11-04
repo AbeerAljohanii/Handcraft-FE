@@ -11,7 +11,7 @@ import {
   Box,
 } from "@mui/material";
 import DrawerComp from "./CustomDrawer";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 
 const tabStyles = {
   textTransform: "none",
@@ -52,7 +52,15 @@ export default function NavBar() {
   const [value, setValue] = useState(0);
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("lg"));
+  const navigate = useNavigate();
 
+  const handleSignIn = () => {
+    navigate("/signin");
+  };
+
+  const handleSignUp = () => {
+    navigate("/signup");
+  };
   return (
     <AppBar sx={{ background: "#F2E9E4" }}>
       <Toolbar>
@@ -96,12 +104,17 @@ export default function NavBar() {
               ))}
             </Tabs>
             <Box marginLeft="auto">
-              <Button sx={buttonStyles} variant="contained">
+              <Button
+                sx={buttonStyles}
+                variant="contained"
+                onClick={handleSignIn}
+              >
                 Login
               </Button>
               <Button
                 sx={{ marginLeft: "10px", ...buttonStyles }}
                 variant="contained"
+                onClick={handleSignUp}
               >
                 Sign Up
               </Button>

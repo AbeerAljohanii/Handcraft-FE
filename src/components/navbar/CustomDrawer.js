@@ -10,10 +10,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 
 function DrawerComp() {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const navigate = useNavigate();
 
   const PAGES = [
     { label: "Home", path: "/" },
@@ -30,6 +31,16 @@ function DrawerComp() {
       backgroundColor: "#5a331d",
     },
   };
+  const handleSignIn = () => {
+    setOpenDrawer(false);
+    navigate("/signin");
+  };
+
+  const handleSignUp = () => {
+    setOpenDrawer(false);
+    navigate("/signup");
+  };
+
   return (
     <React.Fragment>
       <Drawer
@@ -58,19 +69,13 @@ function DrawerComp() {
               <ListItemText primary={page.label} />
             </ListItemButton>
           ))}
-          <ListItemButton
-            onClick={() => setOpenDrawer(false)}
-            sx={SignInUpStyles}
-          >
+          <ListItemButton onClick={handleSignIn} sx={SignInUpStyles}>
             <ListItemIcon>
               <LoginIcon />
             </ListItemIcon>
             <ListItemText primary="Login" />
           </ListItemButton>
-          <ListItemButton
-            onClick={() => setOpenDrawer(false)}
-            sx={SignInUpStyles}
-          >
+          <ListItemButton onClick={handleSignUp} sx={SignInUpStyles}>
             <ListItemIcon>
               <PersonAddIcon />
             </ListItemIcon>
