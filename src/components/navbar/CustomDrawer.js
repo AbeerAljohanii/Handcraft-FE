@@ -9,10 +9,14 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Avatar,
+  Box,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom";
+import avatar from "../../assets/avatar.png";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-function DrawerComp() {
+function DrawerComp({ isAuthenticated, logOutHandler }) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const navigate = useNavigate();
 
@@ -69,18 +73,47 @@ function DrawerComp() {
               <ListItemText primary={page.label} />
             </ListItemButton>
           ))}
-          <ListItemButton onClick={handleSignIn} sx={SignInUpStyles}>
-            <ListItemIcon>
-              <LoginIcon />
-            </ListItemIcon>
-            <ListItemText primary="Login" />
-          </ListItemButton>
-          <ListItemButton onClick={handleSignUp} sx={SignInUpStyles}>
-            <ListItemIcon>
-              <PersonAddIcon />
-            </ListItemIcon>
-            <ListItemText primary="Sign Up" />
-          </ListItemButton>
+          {isAuthenticated ? (
+            <>
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                marginY={2}
+              >
+                <Link to="profile" style={{ textDecoration: "none" }}>
+                  <Avatar alt="user icon" src={avatar} />
+                </Link>
+                <IconButton
+                  onClick={logOutHandler}
+                  sx={{
+                    cursor: "pointer",
+                    marginLeft: 2,
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </Box>
+            </>
+          ) : (
+            <>
+              <ListItemButton onClick={handleSignIn} sx={SignInUpStyles}>
+                <ListItemIcon>
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login" />
+              </ListItemButton>
+              <ListItemButton onClick={handleSignUp} sx={SignInUpStyles}>
+                <ListItemIcon>
+                  <PersonAddIcon />
+                </ListItemIcon>
+                <ListItemText primary="Sign Up" />
+              </ListItemButton>
+            </>
+          )}
         </List>
       </Drawer>
       <IconButton onClick={() => setOpenDrawer(!openDrawer)}>

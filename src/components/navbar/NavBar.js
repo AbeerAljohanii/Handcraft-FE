@@ -9,9 +9,12 @@ import {
   useMediaQuery,
   useTheme,
   Box,
+  Avatar,
 } from "@mui/material";
 import DrawerComp from "./CustomDrawer";
-import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom";
+import avatar from "../../assets/avatar.png";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const tabStyles = {
   textTransform: "none",
@@ -48,7 +51,7 @@ const PAGES = [
   { label: "Contact Us", path: "/contactUs" },
 ];
 
-export default function NavBar() {
+export default function NavBar({ isAuthenticated, setIsAuthenticated }) {
   const [value, setValue] = useState(0);
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("lg"));
@@ -61,6 +64,16 @@ export default function NavBar() {
   const handleSignUp = () => {
     navigate("/signup");
   };
+
+  // Logout feature (apply later)
+  function logOutHandler() {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    navigate("/home");
+    setValue(0);
+    // setUserData(null) => in profile or app
+  }
+
   return (
     <AppBar sx={{ background: "#F2E9E4" }}>
       <Toolbar>
@@ -75,7 +88,10 @@ export default function NavBar() {
                 }}
               />
               <Box marginLeft="auto">
-                <DrawerComp />
+                <DrawerComp
+                  isAuthenticated={isAuthenticated}
+                  logOutHandler={logOutHandler}
+                />
               </Box>
             </Box>
           </>
@@ -104,20 +120,42 @@ export default function NavBar() {
               ))}
             </Tabs>
             <Box marginLeft="auto">
-              <Button
-                sx={buttonStyles}
-                variant="contained"
-                onClick={handleSignIn}
-              >
-                Login
-              </Button>
-              <Button
-                sx={{ marginLeft: "10px", ...buttonStyles }}
-                variant="contained"
-                onClick={handleSignUp}
-              >
-                Sign Up
-              </Button>
+              {isAuthenticated ? (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Link to="profile">
+                    <Avatar
+                      alt="user icon"
+                      src={avatar}
+                      sx={{ marginRight: 2 }}
+                    />
+                  </Link>
+                  <Button
+                    sx={buttonStyles}
+                    variant="contained"
+                    onClick={logOutHandler}
+                    startIcon={<LogoutIcon />}
+                  >
+                    Logout
+                  </Button>
+                </Box>
+              ) : (
+                <>
+                  <Button
+                    sx={buttonStyles}
+                    variant="contained"
+                    onClick={handleSignIn}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    sx={{ marginLeft: "10px", ...buttonStyles }}
+                    variant="contained"
+                    onClick={handleSignUp}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </Box>
           </Box>
         )}

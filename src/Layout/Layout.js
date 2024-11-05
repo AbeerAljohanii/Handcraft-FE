@@ -2,11 +2,13 @@ import React from "react";
 import NavBar from "../components/navbar/NavBar";
 import { Outlet } from "react-router-dom";
 
-
-function Layout() {
+function Layout({ isAuthenticated, setIsAuthenticated }) {
   return (
     <>
-      <NavBar />
+      <NavBar
+        isAuthenticated={isAuthenticated}
+        setIsAuthenticated={setIsAuthenticated}
+      />
       <Outlet />
     </>
   );

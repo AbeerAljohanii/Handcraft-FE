@@ -23,6 +23,7 @@ function App() {
   // User Profile
   const [userData, setUserData] = useState(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -100,7 +101,9 @@ function App() {
   }, []);
 
   // protected route
-  let isAuthenticated = userData ? true : false;
+  useEffect(() => {
+    setIsAuthenticated(userData ? true : false);
+  }, [userData]);
 
   if (loading) {
     return <div> Please wait 1 second </div>;
@@ -113,7 +116,12 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: (
+        <Layout
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+        />
+      ),
       children: [
         {
           index: true,

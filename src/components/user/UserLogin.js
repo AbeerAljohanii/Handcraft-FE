@@ -39,7 +39,7 @@ export default function UserLogin({ getUserData }) {
         getUserData();
       })
       .then(() => {
-        navigate("/profile");
+        navigate("/home");
       })
       .then(() => {
         // Reset fields
