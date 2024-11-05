@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function UserLogin() {
+export default function UserLogin({ getUserData }) {
   const [userLogin, setuserLogin] = useState({
     email: "",
     password: "",
@@ -33,20 +33,29 @@ export default function UserLogin() {
         if (response.status === 200) {
           setSuccess("Login successful!"); // didn't implement yet
           localStorage.setItem("token", response.data);
-          // Reset fields
-          setuserLogin({
-            email: "",
-            password: "",
-          });
-          setError("");
-          navigate("/home");
         }
+      })
+      .then(() => {
+        getUserData();
+      })
+      .then(() => {
+        navigate("/profile");
+      })
+      .then(() => {
+        // Reset fields
+        setuserLogin({
+          email: "",
+          password: "",
+        });
+        setError("");
       })
       .catch((error) => {
         if (error.response?.data?.errors) {
           const firstError = Object.values(error.response.data.errors)[0]; // Get the first array of errors
           const formattedError = firstError.join(" and "); // Join messages with " and "
           setError(formattedError); // Set the formatted error message
+        } else if (typeof error.response.data === "string") {
+          setError(error.response.data);
         } else {
           setError(`An error occurred: ${error.message}`);
         }
@@ -117,6 +126,20 @@ export default function UserLogin() {
           Login
         </Button>
       </form>
+      <Typography variant="body2" align="center" sx={{ marginTop: 2 }}>
+        Don't have an account?{" "}
+        <Typography
+          component="span"
+          sx={{
+            textDecoration: "underline",
+            cursor: "pointer",
+            color: "primary.main",
+          }}
+          onClick={() => navigate("/signup")}
+        >
+          Sign Up
+        </Typography>
+      </Typography>
     </Box>
   );
 }

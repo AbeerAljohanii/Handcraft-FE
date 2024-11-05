@@ -8,6 +8,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import UserLogin from "./components/user/UserLogin";
 import UserRegister from "./components/user/UserRegister";
+import UserProfile from "./components/user/UserProfile";
+import ProtectedRoute from "./components/user/ProtectedRoute";
+import Dashboard from "./components/dashboard/Dashboard";
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -16,6 +19,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+
+  // User Profile
+  const [userData, setUserData] = useState(null);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+
   const handleChange = (event, value) => {
     setPage(value);
   };
@@ -63,15 +71,44 @@ function App() {
     getData();
   }, [pageNumber, userInput, minPrice, maxPrice]);
 
-  // if (loading) {
-  //   return <div> Please wait 1 second </div>;
-  // }
+  // user
+  // step 1: send token => return the data
+  // token is valid
+  // extract user information=> front
 
-  // if (error) {
-  //   return <div> {error.message}</div>;
-  // }
+  function getUserData() {
+    setIsUserDataLoading(true);
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://localhost:5125/api/v1/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setUserData(response.data);
+        setIsUserDataLoading(false);
+      })
+      .catch((error) => {
+        setIsUserDataLoading(false);
+      });
+  }
 
-  console.log(artworkResponse);
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  // protected route
+  let isAuthenticated = userData ? true : false;
+
+  if (loading) {
+    return <div> Please wait 1 second </div>;
+  }
+
+  if (error) {
+    return <div> {error.message}</div>;
+  }
 
   const router = createBrowserRouter([
     {
@@ -105,16 +142,38 @@ function App() {
           element: <ArtworkDetail />,
         },
         {
-          path: "/home",
+          path: "home",
           element: <HomePage />,
         },
         {
           path: "signin",
-          element: <UserLogin />,
+          element: <UserLogin getUserData={getUserData} />,
         },
         {
           path: "signup",
           element: <UserRegister />,
+        },
+        {
+          path: "profile",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              isUserDataLoading={isUserDataLoading}
+              element={
+                <UserProfile userData={userData} setUserData={setUserData} />
+              }
+            />
+          ),
+        },
+        {
+          path: "dashboard",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              isUserDataLoading={isUserDataLoading}
+              element={<Dashboard />}
+            />
+          ),
         },
         {
           path: "*",

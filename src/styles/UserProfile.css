@@ -1,0 +1,41 @@
+.user-profile {
+    max-width: 600px;
+    margin: 20rem auto 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+h2 {
+    text-align: center;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+    .user-profile {
+        padding: 15px;
+    }
+
+    input {
+        font-size: 14px;
+    }
+
+    .submit-button, .cancel-button, .edit-button {
+        width: 100%;
+    }
+}
