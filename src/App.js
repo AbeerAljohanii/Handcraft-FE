@@ -90,6 +90,7 @@ function App() {
       .then((response) => {
         console.log(response.data);
         setUserData(response.data);
+        setIsAuthenticated(true);
         setIsUserDataLoading(false);
       })
       .catch((error) => {
