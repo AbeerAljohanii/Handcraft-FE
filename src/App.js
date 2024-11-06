@@ -11,6 +11,7 @@ import UserRegister from "./components/user/UserRegister";
 import UserProfile from "./components/user/UserProfile";
 import ProtectedRoute from "./components/user/ProtectedRoute";
 import Dashboard from "./components/dashboard/Dashboard";
+import ArtistArtworks from "./components/artistArtworks/ArtistArtworks";
 
 function App() {
   const [userInput, setUserInput] = useState("");
@@ -120,6 +121,8 @@ function App() {
         <Layout
           isAuthenticated={isAuthenticated}
           setIsAuthenticated={setIsAuthenticated}
+          userData={userData}
+          setUserData={setUserData}
         />
       ),
       children: [
@@ -179,7 +182,21 @@ function App() {
             <ProtectedRoute
               isAuthenticated={isAuthenticated}
               isUserDataLoading={isUserDataLoading}
+              shouldCheckAdmin={true}
+              userData={userData}
               element={<Dashboard />}
+            />
+          ),
+        },
+        {
+          path: "/my-artworks",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              isUserDataLoading={isUserDataLoading}
+              shouldCheckArtist={true}
+              userData={userData}
+              element={<ArtistArtworks />}
             />
           ),
         },

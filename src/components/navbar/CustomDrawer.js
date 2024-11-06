@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import avatar from "../../assets/avatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-function DrawerComp({ isAuthenticated, logOutHandler }) {
+function DrawerComp({ isAuthenticated, logOutHandler, userData }) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const navigate = useNavigate();
 
@@ -27,6 +27,18 @@ function DrawerComp({ isAuthenticated, logOutHandler }) {
     { label: "About Us", path: "/aboutUs" },
     { label: "Contact Us", path: "/contactUs" },
   ];
+
+  // Conditionally add Dashboard or My Artworks to the pages
+  const pagesWithRole = [
+    ...PAGES,
+    ...(userData && userData.role === "Admin"
+      ? [{ label: "Dashboard", path: "/dashboard" }]
+      : []),
+    ...(userData && userData.role === "Artist"
+      ? [{ label: "My Artworks", path: "/my-artworks" }]
+      : []),
+  ];
+
   const SignInUpStyles = {
     backgroundColor: "#603813",
     color: "white",
@@ -58,7 +70,7 @@ function DrawerComp({ isAuthenticated, logOutHandler }) {
         }}
       >
         <List>
-          {PAGES.map((page) => (
+          {pagesWithRole.map((page) => (
             <ListItemButton
               component={Link}
               to={page.path}

@@ -51,7 +51,23 @@ const PAGES = [
   { label: "Contact Us", path: "/contactUs" },
 ];
 
-export default function NavBar({ isAuthenticated, setIsAuthenticated }) {
+export default function NavBar({
+  isAuthenticated,
+  setIsAuthenticated,
+  userData,
+  setUserData,
+}) {
+  // Conditionally add Dashboard or My Artworks to the pages
+  const pagesWithRole = [
+    ...PAGES,
+    ...(userData && userData.role === "Admin"
+      ? [{ label: "Dashboard", path: "/dashboard" }]
+      : []),
+    ...(userData && userData.role === "Artist"
+      ? [{ label: "My Artworks", path: "/my-artworks" }]
+      : []),
+  ];
+
   const [value, setValue] = useState(0);
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("lg"));
@@ -69,6 +85,7 @@ export default function NavBar({ isAuthenticated, setIsAuthenticated }) {
   function logOutHandler() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setUserData(null);
     navigate("/home");
     setValue(0);
     // setUserData(null) => in profile or app
@@ -91,6 +108,7 @@ export default function NavBar({ isAuthenticated, setIsAuthenticated }) {
                 <DrawerComp
                   isAuthenticated={isAuthenticated}
                   logOutHandler={logOutHandler}
+                  userData={userData}
                 />
               </Box>
             </Box>
@@ -109,7 +127,7 @@ export default function NavBar({ isAuthenticated, setIsAuthenticated }) {
               onChange={(e, value) => setValue(value)}
               sx={indicatorStyles}
             >
-              {PAGES.map((page) => (
+              {pagesWithRole.map((page) => (
                 <Tab
                   key={page.path}
                   label={page.label}
