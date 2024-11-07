@@ -9,6 +9,12 @@ const ArtworkTable = ({ artworks, handleOpenDialog, handleDeleteArtwork }) => {
       { Header: "Description", accessor: "description" },
       { Header: "Quantity", accessor: "quantity" },
       { Header: "Price", accessor: "price" },
+      // Add the Category column
+      {
+        Header: "Category",
+        accessor: "category", 
+        Cell: ({ value }) => value?.name || "No Category",
+      },
       {
         Header: "Actions",
         Cell: ({ row }) => (

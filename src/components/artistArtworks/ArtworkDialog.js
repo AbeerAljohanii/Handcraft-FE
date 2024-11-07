@@ -6,6 +6,10 @@ import {
   DialogActions,
   TextField,
   Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 
 const ArtworkDialog = ({
@@ -16,6 +20,7 @@ const ArtworkDialog = ({
   handleSaveArtwork,
   loadingSave,
   selectedArtwork,
+  categories,
 }) => {
   return (
     <Dialog open={dialogOpen} onClose={handleCloseDialog}>
@@ -65,6 +70,29 @@ const ArtworkDialog = ({
           }
           required
         />
+        <FormControl fullWidth margin="dense">
+          <InputLabel>Category</InputLabel>
+          <Select
+            label="Category"
+            value={newArtwork.category?.id || ""} // Use category.id for the selected value
+            onChange={(e) => {
+              const selectedCategory = categories.find(
+                (category) => category.id === e.target.value
+              );
+              setNewArtwork({
+                ...newArtwork,
+                category: selectedCategory, // Set the entire category object
+              });
+            }}
+            required
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialog}>Cancel</Button>

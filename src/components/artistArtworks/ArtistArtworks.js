@@ -11,18 +11,16 @@ const ArtistArtworks = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedArtwork, setSelectedArtwork] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [newArtwork, setNewArtwork] = useState({
     title: "",
     description: "",
     quantity: "",
     price: "",
+    categoryid: null,
   });
 
   const [loadingSave, setLoadingSave] = useState(false);
-
-  useEffect(() => {
-    fetchArtworks();
-  }, []);
 
   const handleError = (error) => {
     if (error.response?.data?.errors) {
@@ -36,19 +34,35 @@ const ArtistArtworks = () => {
     }
   };
 
-  const fetchArtworks = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/my-artworks`, {
-        headers: { Authorization: `Bearer ${token}` },
+  const getCategories = () => {
+    axios
+      .get("http://localhost:5125/api/v1/categories")
+      .then((response) => {
+        setCategories(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
       });
-      setArtworks(response.data);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setIsLoading(false);
-    }
   };
+
+  useEffect(() => {
+    const fetchArtworks = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/my-artworks`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log(response.data);
+        setArtworks(response.data);
+      } catch (error) {
+        handleError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchArtworks();
+    getCategories();
+  }, []);
 
   const handleOpenDialog = (artwork = null) => {
     setSelectedArtwork(artwork);
@@ -58,6 +72,7 @@ const ArtistArtworks = () => {
         description: "",
         quantity: "",
         price: "",
+        categoryid: null,
       }
     );
     setDialogOpen(true);
@@ -75,13 +90,21 @@ const ArtistArtworks = () => {
       description: "",
       quantity: "",
       price: "",
+      categoryid: null,
     });
   };
 
   const handleSaveArtwork = async () => {
     const artworkToSend = {
-      ...newArtwork,
+      Title: newArtwork.title,
+      Description: newArtwork.description,
+      Quantity: newArtwork.quantity,
+      Price: newArtwork.price,
+      CategoryId: newArtwork.category?.id,
     };
+
+    console.log("Sending artwork:", artworkToSend);
+
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
     setLoadingSave(true);
@@ -158,6 +181,7 @@ const ArtistArtworks = () => {
         handleSaveArtwork={handleSaveArtwork}
         loadingSave={loadingSave}
         selectedArtwork={selectedArtwork}
+        categories={categories}
       />
     </Box>
   );
