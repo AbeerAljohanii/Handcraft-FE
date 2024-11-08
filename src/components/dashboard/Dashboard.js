@@ -5,6 +5,8 @@ import ArtworkTable from "../../components/artistArtworks/ArtworkTable";
 import ArtworkDialog from "./artwork/ArtworkDialog";
 import UserTable from "./user/UserTable";
 import UserDialog from "./user/UserDialog";
+import OrderTable from "./order/OrderTable";
+import OrderDialog from "./order/OrderDialog";
 
 const API_URL = "http://localhost:5125/api/v1";
 
@@ -26,10 +28,21 @@ const Dashboard = () => {
       };
     } else if (activeSection === "orders") {
       return {
-        orderId: "",
-        product: "",
-        quantity: 0,
-        price: 0,
+        totalAmount: 0, // Total price of the order
+        shippingAddress: "", // Address for shipping
+        createdAt: new Date().toISOString(), // Creation date (default to current date)
+        user: {
+          name: "", // Customer name
+          phoneNumber: "", // Customer phone number
+          email: "", // Customer email
+        },
+        orderDetails: [
+          {
+            product: "", // Product title or ID
+            quantity: 1, // Quantity ordered
+            price: 0, // Price per item
+          },
+        ],
       };
     }
     return {};
@@ -54,7 +67,7 @@ const Dashboard = () => {
       const response = await axios.get(`${API_URL}/${section}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (section === "users") {
+      if (section === "users" || section === "orders") {
         console.log(response);
         setItems(response.data);
       } else {
@@ -76,28 +89,13 @@ const Dashboard = () => {
     }
     let itemToSend;
 
-    if (section === "users") {
-      itemToSend = {
-        name: item.name,
-        phoneNumber: item.phoneNumber,
-        email: item.email,
-      };
-    } else if (section === "artworks") {
-      itemToSend = {
-        Title: item.title,
-        Description: item.description,
-        Quantity: item.quantity,
-        Price: item.price,
-        CategoryId: item.category?.id, // For Artworks only
-      };
-    } else if (section === "orders") {
-      itemToSend = {
-        orderId: item.orderId,
-        product: item.product,
-        quantity: item.quantity,
-        price: item.price,
-      };
-    }
+    itemToSend = {
+      Title: item.title,
+      Description: item.description,
+      Quantity: item.quantity,
+      Price: item.price,
+      CategoryId: item.category?.id, // For Artworks only
+    };
 
     if (!itemToSend) {
       console.error("Item data is missing");
@@ -124,7 +122,7 @@ const Dashboard = () => {
       setLoadingSave(false);
     }
   };
-
+  // user
   const handleSaveUser = async () => {
     let itemToSend = {
       name: newItem.name,
@@ -150,6 +148,51 @@ const Dashboard = () => {
           )
         );
       }
+      handleCloseDialog();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoadingSave(false);
+    }
+  };
+  // order
+  const handleSaveOrder = async () => {
+    let itemToSend = {
+      orderId: newItem.orderId,
+      totalAmount: newItem.totalAmount,
+      shippingAddress: newItem.shippingAddress,
+      createdAt: newItem.createdAt,
+      user: {
+        name: newItem.user.name,
+        phoneNumber: newItem.user.phoneNumber,
+        email: newItem.user.email,
+      },
+      orderDetails: newItem.orderDetails.map((detail) => ({
+        product: detail.product,
+        quantity: detail.quantity,
+        price: detail.price,
+      })),
+    };
+
+    const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+    setLoadingSave(true);
+
+    try {
+      const response = await axios.patch(
+        `${API_URL}/orders/${newItem.id}`,
+        itemToSend,
+        { headers }
+      );
+
+      if (response.status === 204) {
+        setItems((prevItems) =>
+          prevItems.map((order) =>
+            order.id === newItem.id ? { ...order, ...itemToSend } : order
+          )
+        );
+      }
+
       handleCloseDialog();
     } catch (error) {
       handleError(error);
@@ -206,10 +249,23 @@ const Dashboard = () => {
         };
       } else if (activeSection === "orders") {
         return {
-          orderId: "",
-          product: "",
-          quantity: 0,
-          price: 0,
+          orderId: "", // ID of the order
+          totalAmount: 0, // Total price of the order
+          shippingAddress: "", // Address for shipping
+          createdAt: new Date().toISOString(), // Creation date (default to current date)
+          user: {
+            name: "", // Customer name
+            phoneNumber: "", // Customer phone number
+            email: "", // Customer email
+          },
+          orderDetails: [
+            // Array to handle multiple items in an order
+            {
+              product: "", // Product title or ID
+              quantity: 1, // Quantity ordered
+              price: 0, // Price per item
+            },
+          ],
         };
       }
       return {};
@@ -314,8 +370,27 @@ const Dashboard = () => {
       )}
 
       {activeSection === "orders" && (
-        <Typography variant="h5">Orders Section</Typography>
-        // Add Orders Section content here
+        <>
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <OrderTable
+              orders={items}
+              handleOpenDialog={handleOpenDialog}
+              handleDeleteItem={handleDeleteItem}
+            />
+          )}
+
+          <OrderDialog
+            dialogOpen={dialogOpen}
+            handleCloseDialog={handleCloseDialog}
+            newItem={newItem}
+            setNewItem={setNewItem}
+            selectedItem={selectedItem}
+            handleSaveOrder={handleSaveOrder}
+            loadingSave={loadingSave}
+          />
+        </>
       )}
     </Box>
   );
