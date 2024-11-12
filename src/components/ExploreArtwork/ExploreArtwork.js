@@ -1,8 +1,7 @@
 import React from "react";
 import "../../styles/ExploreArtwork.css";
-import { artCategories } from "../../assets/assets";
 
-export default function ExploreArtwork({ category, setCategory }) {
+export default function ExploreArtwork({ categories, setCategory, category }) {
   return (
     <div className="explore-artwork" id="explore-artwork">
       <h1>Explore Handmade Masterpieces</h1>
@@ -11,23 +10,19 @@ export default function ExploreArtwork({ category, setCategory }) {
         story of creativity and craftsmanship.
       </p>
       <div className="explore-artwork-list">
-        {artCategories.map((item, index) => {
+        {categories.map((item, index) => {
           return (
             <div
-              onClick={() =>
-                setCategory((prev) =>
-                  prev === item.category ? "All" : item.category
-                )
-              }
+              onClick={() => setCategory(item.categoryName)}
               key={index}
               className="explore-artwork-list-item"
             >
               <img
-                className={category === item.category ? "active" : ""}
-                src={item.image}
-                alt={`${item.category}`}
+                className={item.categoryName === category ? "active" : ""}
+                src={item.categoryUrl}
+                alt={item.categoryName}
               />
-              <p>{item.category}</p>
+              <p>{item.categoryName}</p>
             </div>
           );
         })}

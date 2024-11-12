@@ -3,8 +3,9 @@ import Banner from "../assets/Hero.png";
 import "../styles/HomePage.css";
 import { Brush } from "@mui/icons-material";
 import { CalendarToday } from "@mui/icons-material";
-
+import { useNavigate } from "react-router-dom";
 export default function HomePage() {
+  const navigate = useNavigate();
   const servicesRef = useRef(null);
 
   useEffect(() => {
@@ -58,7 +59,9 @@ export default function HomePage() {
             find products with personal touches that can't be found anywhere
             else.
           </p>
-          <button className="button">Shop Now</button>
+          <button className="button" onClick={() => navigate("/artworks")}>
+            Shop Now
+          </button>
         </div>
         <div className="home-image-container">
           <img src={Banner} alt="Banner" className="home-banner-image" />
@@ -82,6 +85,7 @@ export default function HomePage() {
               Join our workshops to learn from experienced artists and create
               your own masterpieces.
             </p>
+            <span className="coming-soon">Coming Soon</span>
           </div>
         </div>
       </div>

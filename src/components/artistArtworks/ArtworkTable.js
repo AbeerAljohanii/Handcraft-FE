@@ -12,8 +12,8 @@ const ArtworkTable = ({ artworks, handleOpenDialog, handleDeleteArtwork }) => {
       // Add the Category column
       {
         Header: "Category",
-        accessor: "category", 
-        Cell: ({ value }) => value?.name || "No Category",
+        accessor: "category",
+        Cell: ({ value }) => value?.categoryName || "No Category",
       },
       {
         Header: "Actions",

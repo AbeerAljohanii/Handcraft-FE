@@ -12,14 +12,23 @@ import UserProfile from "./components/user/UserProfile";
 import ProtectedRoute from "./components/user/ProtectedRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import ArtistArtworks from "./components/artistArtworks/ArtistArtworks";
+import { fetchItems } from "./api";
+import Cart from "./components/cart/Cart";
+import Order from "./components/order/Order";
+import OrderConfirmation from "./components/order/OrderConfirmation";
+import CreateArtwork from "./components/createArtwork/CreateArtwork";
 
 function App() {
+  const [cartList, setCartList] = useState(
+    JSON.parse(localStorage.getItem("cartList")) || []
+  );
   const [userInput, setUserInput] = useState("");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [isFirstRequest, setIsFirstRequest] = useState(true);
 
   // User Profile
   const [userData, setUserData] = useState(null);
@@ -29,21 +38,28 @@ function App() {
   const handleChange = (event, value) => {
     setPage(value);
   };
+
   const [artworkResponse, setArtworkResponse] = useState({
     artworks: [],
     totalCount: 0,
   });
   const [category, setCategory] = useState("All");
+  const [categories, setCategories] = useState([]);
 
   // http://localhost:5125
 
   // page size 5 (number of artworks)
   // page number (page-1)* page size
-  let pageSize = 2;
+  let pageSize = 6;
   let pageNumber = page;
 
   function getUrl(userInput) {
-    let artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&lowPrice=${minPrice}&highPrice=${maxPrice}`;
+    let artworkUrl = `http://localhost:5125/api/v1/artworks`;
+
+    if (!isFirstRequest) {
+      artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&lowPrice=${minPrice}&highPrice=${maxPrice}`;
+    }
+
     if (userInput) {
       artworkUrl += `&search=${userInput}`;
     }
@@ -60,6 +76,15 @@ function App() {
     axios
       .get(getUrl(userInput))
       .then((response) => {
+        const fetchedArtworks = response.data.artworks;
+        const dynamicMaxPrice =
+          fetchedArtworks.length > 0
+            ? Math.max(...fetchedArtworks.map((artwork) => artwork.price))
+            : 50; // Fallback to 50 if no artworks are found
+
+        setMaxPrice(dynamicMaxPrice);
+        console.log("Updated maxPrice: ", dynamicMaxPrice);
+        setIsFirstRequest(false);
         setArtworkResponse(response.data);
         setLoading(false);
       })
@@ -70,8 +95,21 @@ function App() {
   }
 
   useEffect(() => {
+    fetchItems("/categories")
+      .then((response) => {
+        console.log(response.data);
+        setCategories(response.data);
+      })
+      .catch((error) => console.error("Error fetching categories", error));
+  }, []);
+
+  useEffect(() => {
     getData();
-  }, [pageNumber, userInput, minPrice, maxPrice]);
+  }, [page, userInput, minPrice, maxPrice]);
+
+  useEffect(() => {
+    localStorage.setItem("cartList", JSON.stringify(cartList));
+  }, [cartList]);
 
   // user
   // step 1: send token => return the data
@@ -137,8 +175,9 @@ function App() {
             <Artworks
               category={category}
               setCategory={setCategory}
-              totalCount={artworkResponse.totalCount}
+              categories={categories}
               page={page}
+              totalCount={artworkResponse.totalCount}
               handleChange={handleChange}
               artworkList={artworkResponse.artworks}
               artworksPerPage={pageSize}
@@ -151,7 +190,7 @@ function App() {
         },
         {
           path: "artworks/:artworkId",
-          element: <ArtworkDetail />,
+          element: <ArtworkDetail userData={userData}/>,
         },
         {
           path: "home",
@@ -164,6 +203,39 @@ function App() {
         {
           path: "signup",
           element: <UserRegister />,
+        },
+        {
+          path: "cart",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              userData={userData}
+              element={<Cart />}
+              shouldCheckCustomer={true}
+            />
+          ),
+        },
+        {
+          path: "order",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              userData={userData}
+              element={<Order />}
+              shouldCheckCustomer={true}
+            />
+          ),
+        },
+        {
+          path: "order-confirmation",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              userData={userData}
+              element={<OrderConfirmation />}
+              shouldCheckCustomer={true}
+            />
+          ),
         },
         {
           path: "profile",
@@ -202,8 +274,19 @@ function App() {
           ),
         },
         {
+          path: "/create-artwork",
+          element: (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              shouldCheckArtist={true}
+              userData={userData}
+              element={<CreateArtwork />}
+            />
+          ),
+        },
+        {
           path: "*",
-          element: <HomePage />,
+          element: <HomePage />, // handle error page later
         },
       ],
     },

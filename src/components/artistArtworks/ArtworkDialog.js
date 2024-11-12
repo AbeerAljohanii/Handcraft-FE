@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,37 +15,34 @@ import {
 const ArtworkDialog = ({
   dialogOpen,
   handleCloseDialog,
-  newArtwork,
-  setNewArtwork,
   handleSaveArtwork,
-  loadingSave,
   selectedArtwork,
   categories,
+  loadingSave,
+  handleChangeArtwork,
 }) => {
+  if (!selectedArtwork) {
+    return null; // Don't render the dialog if no artwork is selected
+  }
+
   return (
     <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-      <DialogTitle>
-        {selectedArtwork ? "Update Artwork" : "Add New Artwork"}
-      </DialogTitle>
+      <DialogTitle>Update Artwork</DialogTitle>
       <DialogContent>
         <TextField
           fullWidth
           label="Title"
           margin="dense"
-          value={newArtwork.title || ""}
-          onChange={(e) =>
-            setNewArtwork({ ...newArtwork, title: e.target.value })
-          }
+          value={selectedArtwork.title || ""}
+          onChange={(e) => handleChangeArtwork("title", e.target.value)} // Call parent handler
           required
         />
         <TextField
           fullWidth
           label="Description"
           margin="dense"
-          value={newArtwork.description || ""}
-          onChange={(e) =>
-            setNewArtwork({ ...newArtwork, description: e.target.value })
-          }
+          value={selectedArtwork.description || ""}
+          onChange={(e) => handleChangeArtwork("description", e.target.value)} // Call parent handler
           required
         />
         <TextField
@@ -53,10 +50,8 @@ const ArtworkDialog = ({
           label="Quantity"
           margin="dense"
           type="number"
-          value={newArtwork.quantity || ""}
-          onChange={(e) =>
-            setNewArtwork({ ...newArtwork, quantity: e.target.value })
-          }
+          value={selectedArtwork.quantity || ""}
+          onChange={(e) => handleChangeArtwork("quantity", e.target.value)} // Call parent handler
           required
         />
         <TextField
@@ -64,31 +59,26 @@ const ArtworkDialog = ({
           label="Price"
           margin="dense"
           type="number"
-          value={newArtwork.price || ""}
-          onChange={(e) =>
-            setNewArtwork({ ...newArtwork, price: e.target.value })
-          }
+          value={selectedArtwork.price || ""}
+          onChange={(e) => handleChangeArtwork("price", e.target.value)} // Call parent handler
           required
         />
         <FormControl fullWidth margin="dense">
           <InputLabel>Category</InputLabel>
           <Select
             label="Category"
-            value={newArtwork.category?.id || ""} // Use category.id for the selected value
+            value={selectedArtwork.category?.id || ""}
             onChange={(e) => {
               const selectedCategory = categories.find(
                 (category) => category.id === e.target.value
               );
-              setNewArtwork({
-                ...newArtwork,
-                category: selectedCategory, // Set the entire category object
-              });
+              handleChangeArtwork("category", selectedCategory); // Call parent handler
             }}
             required
           >
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
-                {category.name}
+                {category.categoryName}
               </MenuItem>
             ))}
           </Select>
@@ -101,11 +91,10 @@ const ArtworkDialog = ({
           color="primary"
           disabled={loadingSave}
         >
-          {loadingSave ? "Saving..." : selectedArtwork ? "Update" : "Save"}
+          {loadingSave ? "Saving..." : "Update"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
-
 export default ArtworkDialog;

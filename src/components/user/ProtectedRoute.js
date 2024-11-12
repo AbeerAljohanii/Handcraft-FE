@@ -8,6 +8,7 @@ export default function ProtectedRoute({
   shouldCheckAdmin,
   userData,
   shouldCheckArtist,
+  shouldCheckCustomer,
 }) {
   if (isUserDataLoading) {
     return <div>Loading...</div>;
@@ -27,6 +28,15 @@ export default function ProtectedRoute({
   // Check if the user is artist
   if (shouldCheckArtist) {
     return isAuthenticated && userData.role === "Artist" ? (
+      element
+    ) : (
+      <Navigate to="/signin" />
+    );
+  }
+
+  // Check if the user is customer (for Cart, Order, Order Confirmation)
+  if (shouldCheckCustomer) {
+    return isAuthenticated && userData.role === "Customer" ? (
       element
     ) : (
       <Navigate to="/signin" />

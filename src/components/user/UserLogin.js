@@ -21,7 +21,10 @@ export default function UserLogin({ getUserData }) {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setuserLogin({ ...userLogin, [name]: value });
+    setuserLogin({
+      ...userLogin,
+      [name]: name === "email" ? value.toLowerCase() : value, // Force email to lowercase
+    });
   }
 
   const handleLogin = async (e) => {

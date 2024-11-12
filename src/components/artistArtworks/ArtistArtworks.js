@@ -3,23 +3,13 @@ import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import ArtworkTable from "./ArtworkTable";
 import ArtworkDialog from "./ArtworkDialog";
-
-const API_URL = "http://localhost:5125/api/v1/artworks";
-
+import { fetchItems, createItem, updateItem, deleteItem } from "../../api";
 const ArtistArtworks = () => {
   const [artworks, setArtworks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [newArtwork, setNewArtwork] = useState({
-    title: "",
-    description: "",
-    quantity: "",
-    price: "",
-    categoryid: null,
-  });
-
   const [loadingSave, setLoadingSave] = useState(false);
 
   const handleError = (error) => {
@@ -64,72 +54,43 @@ const ArtistArtworks = () => {
     getCategories();
   }, []);
 
-  const handleOpenDialog = (artwork = null) => {
+  const handleOpenDialog = (artwork) => {
     setSelectedArtwork(artwork);
-    setNewArtwork(
-      artwork || {
-        title: "",
-        description: "",
-        quantity: "",
-        price: "",
-        categoryid: null,
-      }
-    );
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setSelectedArtwork(null);
-    resetArtworkForm();
   };
 
-  const resetArtworkForm = () => {
-    setNewArtwork({
-      title: "",
-      description: "",
-      quantity: "",
-      price: "",
-      categoryid: null,
-    });
+  const handleChangeArtwork = (field, value) => {
+    setSelectedArtwork((prevArtwork) => ({
+      ...prevArtwork,
+      [field]: value,
+    }));
   };
 
   const handleSaveArtwork = async () => {
+    setLoadingSave(true);
     const artworkToSend = {
-      Title: newArtwork.title,
-      Description: newArtwork.description,
-      Quantity: newArtwork.quantity,
-      Price: newArtwork.price,
-      CategoryId: newArtwork.category?.id,
+      Title: selectedArtwork.title,
+      Description: selectedArtwork.description,
+      Quantity: selectedArtwork.quantity,
+      Price: selectedArtwork.price,
+      CategoryId: selectedArtwork.category?.id,
     };
 
-    console.log("Sending artwork:", artworkToSend);
-
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
-    setLoadingSave(true);
-
     try {
-      const url = selectedArtwork
-        ? `${API_URL}/${selectedArtwork.id}`
-        : `${API_URL}`;
-      const method = selectedArtwork ? "patch" : "post";
-
-      const response = await axios[method](url, artworkToSend, { headers });
-
-      console.log(response.data);
-
-      if (selectedArtwork) {
-        setArtworks((prev) =>
-          prev.map((art) =>
-            art.id === selectedArtwork.id ? response.data : art
-          )
-        );
-      } else {
-        setArtworks((prev) => [...prev, response.data]);
-      }
-
-      handleCloseDialog();
+      const response = await updateItem(
+        "/artworks",
+        selectedArtwork.id,
+        artworkToSend
+      );
+      setArtworks((prev) =>
+        prev.map((art) => (art.id === selectedArtwork.id ? response.data : art))
+      );
+      setDialogOpen(false);
     } catch (error) {
       handleError(error);
     } finally {
@@ -153,35 +114,26 @@ const ArtistArtworks = () => {
       <Typography variant="h4" gutterBottom>
         My Artworks
       </Typography>
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleOpenDialog()}
-        sx={{ marginBottom: 3 }}
-      >
-        Add New Artwork
-      </Button>
-
       {isLoading ? (
         <CircularProgress />
-      ) : (
+      ) : artworks.length > 0 ? (
         <ArtworkTable
           artworks={artworks}
           handleOpenDialog={handleOpenDialog}
           handleDeleteArtwork={handleDeleteArtwork}
         />
+      ) : (
+        <Typography>No Artworks available</Typography>
       )}
 
       <ArtworkDialog
         dialogOpen={dialogOpen}
         handleCloseDialog={handleCloseDialog}
-        newArtwork={newArtwork}
-        setNewArtwork={setNewArtwork}
-        handleSaveArtwork={handleSaveArtwork}
-        loadingSave={loadingSave}
         selectedArtwork={selectedArtwork}
+        handleSaveArtwork={handleSaveArtwork}
         categories={categories}
+        loadingSave={loadingSave}
+        handleChangeArtwork={handleChangeArtwork}
       />
     </Box>
   );

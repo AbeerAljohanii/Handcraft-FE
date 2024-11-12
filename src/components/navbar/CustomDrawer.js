@@ -15,17 +15,22 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import avatar from "../../assets/avatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-function DrawerComp({ isAuthenticated, logOutHandler, userData }) {
+function DrawerComp({
+  isAuthenticated,
+  logOutHandler,
+  userData,
+  StyledBadge,
+  cartCount,
+}) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const navigate = useNavigate();
 
   const PAGES = [
     { label: "Home", path: "/" },
     { label: "Shop Artwork", path: "/artworks" },
-    { label: "Workshop", path: "/workshops" },
-    { label: "About Us", path: "/aboutUs" },
-    { label: "Contact Us", path: "/contactUs" },
+    // { label: "Workshop", path: "/workshops" },
   ];
 
   // Conditionally add Dashboard or My Artworks to the pages
@@ -35,7 +40,10 @@ function DrawerComp({ isAuthenticated, logOutHandler, userData }) {
       ? [{ label: "Dashboard", path: "/dashboard" }]
       : []),
     ...(userData && userData.role === "Artist"
-      ? [{ label: "My Artworks", path: "/my-artworks" }]
+      ? [
+          { label: "My Artworks", path: "/my-artworks" },
+          { label: "Create Artwork", path: "/create-artwork" },
+        ]
       : []),
   ];
 
@@ -93,6 +101,37 @@ function DrawerComp({ isAuthenticated, logOutHandler, userData }) {
                 alignItems="center"
                 marginY={2}
               >
+                {userData.role === "Customer" && (
+                  <IconButton
+                    aria-label="cart"
+                    onClick={() => {
+                      navigate("cart");
+                    }}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                  >
+                    <StyledBadge
+                      badgeContent={cartCount}
+                      sx={{
+                        "& .MuiBadge-dot": {
+                          backgroundColor: "#603813",
+                          color: "#ffffff",
+                        },
+                      }}
+                    >
+                      <ShoppingCartIcon
+                        style={{
+                          color: "#603813",
+                          fontSize: "2.7rem",
+                          marginRight: "10px",
+                        }}
+                      />
+                    </StyledBadge>
+                  </IconButton>
+                )}
                 <Link to="profile" style={{ textDecoration: "none" }}>
                   <Avatar alt="user icon" src={avatar} />
                 </Link>

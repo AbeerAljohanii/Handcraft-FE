@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import ArtworkTable from "../../components/artistArtworks/ArtworkTable";
-import ArtworkDialog from "./artwork/ArtworkDialog";
+import ArtworkDialog from "../artistArtworks/ArtworkDialog";
 import UserTable from "./user/UserTable";
 import UserDialog from "./user/UserDialog";
 import OrderTable from "./order/OrderTable";
@@ -18,35 +18,7 @@ const Dashboard = () => {
   const [categories, setCategories] = useState([]); // For Artworks only
   const [loadingSave, setLoadingSave] = useState(false);
   const [activeSection, setActiveSection] = useState("artworks");
-
-  const [newItem, setNewItem] = useState(() => {
-    if (activeSection === "users") {
-      return {
-        name: "",
-        phoneNumber: "",
-        email: "",
-      };
-    } else if (activeSection === "orders") {
-      return {
-        totalAmount: 0, // Total price of the order
-        shippingAddress: "", // Address for shipping
-        createdAt: new Date().toISOString(), // Creation date (default to current date)
-        user: {
-          name: "", // Customer name
-          phoneNumber: "", // Customer phone number
-          email: "", // Customer email
-        },
-        orderDetails: [
-          {
-            product: "", // Product title or ID
-            quantity: 1, // Quantity ordered
-            price: 0, // Price per item
-          },
-        ],
-      };
-    }
-    return {};
-  });
+  const [newItem, setNewItem] = useState({});
 
   const handleError = (error) => {
     if (error.response?.data?.errors) {
@@ -71,6 +43,7 @@ const Dashboard = () => {
         console.log(response);
         setItems(response.data);
       } else {
+        console.log(response);
         setItems(response.data[section]);
       }
     } catch (error) {
@@ -80,40 +53,24 @@ const Dashboard = () => {
     }
   };
 
-  // Reusable Save Function
-  const handleSaveItem = async (section, item) => {
-    console.log("Attempting to save item with id:", item);
-    if (!item.id) {
-      console.error("Item ID is undefined. Cannot make PATCH request.");
-      return;
-    }
-    let itemToSend;
-
-    itemToSend = {
-      Title: item.title,
-      Description: item.description,
-      Quantity: item.quantity,
-      Price: item.price,
-      CategoryId: item.category?.id, // For Artworks only
-    };
-
-    if (!itemToSend) {
-      console.error("Item data is missing");
-      return;
-    }
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
+  // artwork
+  const handleSaveArtwork = async () => {
     setLoadingSave(true);
-
+    let itemToSend = {
+      Title: selectedItem.title,
+      Description: selectedItem.description,
+      Quantity: selectedItem.quantity,
+      Price: selectedItem.price,
+      CategoryId: selectedItem.category?.id,
+    };
     try {
-      const response = await axios.patch(
-        `${API_URL}/${section}/${item.id}`,
-        itemToSend,
-        { headers }
+      const response = await updateItem(
+        `${activeSection}`,
+        selectedItem.id,
+        itemToSend
       );
-
       setItems((prev) =>
-        prev.map((art) => (art.id === item.id ? response.data : art))
+        prev.map((art) => (art.id === selectedItem.id ? response.data : art))
       );
       handleCloseDialog();
     } catch (error) {
@@ -226,6 +183,13 @@ const Dashboard = () => {
     resetItemForm();
   };
 
+  const handleChangeArtwork = (field, value) => {
+    setSelectedItem((prevArtwork) => ({
+      ...prevArtwork,
+      [field]: value,
+    }));
+  };
+
   // Categories (Artworks only)
   const getCategories = () => {
     axios
@@ -274,6 +238,8 @@ const Dashboard = () => {
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
+    setIsLoading(true);
+    setItems([]);
   };
 
   useEffect(() => {
@@ -326,21 +292,26 @@ const Dashboard = () => {
         <>
           {isLoading ? (
             <CircularProgress />
-          ) : (
+          ) : // Ensure 'items' is not empty and is in the expected format
+          items && items.length > 0 ? (
             <ArtworkTable
               artworks={items} // Same component for Artworks, Users, and Orders
               handleOpenDialog={handleOpenDialog}
-              handleDeleteItem={handleDeleteItem}
+              handleDeleteArtwork={handleDeleteItem}
             />
+          ) : (
+            // If no items are available, show a message
+            <Typography>No artworks available</Typography>
           )}
 
           <ArtworkDialog
             dialogOpen={dialogOpen}
             handleCloseDialog={handleCloseDialog}
             selectedArtwork={selectedItem}
-            handleSaveArtwork={(item) => handleSaveItem("artworks", item)}
+            handleSaveArtwork={handleSaveArtwork}
             categories={categories}
             loadingSave={loadingSave}
+            handleChangeArtwork={handleChangeArtwork}
           />
         </>
       )}
@@ -349,12 +320,15 @@ const Dashboard = () => {
         <>
           {isLoading ? (
             <CircularProgress />
-          ) : (
+          ) : items && items.length > 0 ? (
             <UserTable
               users={items}
               handleOpenDialog={handleOpenDialog}
               handleDeleteItem={handleDeleteItem}
             />
+          ) : (
+            // If no items are available, show a message
+            <Typography>No users available</Typography>
           )}
 
           <UserDialog
@@ -373,12 +347,15 @@ const Dashboard = () => {
         <>
           {isLoading ? (
             <CircularProgress />
-          ) : (
+          ) : items && items.length > 0 ? (
             <OrderTable
               orders={items}
               handleOpenDialog={handleOpenDialog}
               handleDeleteItem={handleDeleteItem}
             />
+          ) : (
+            // If no items are available, show a message
+            <Typography>No orders available</Typography>
           )}
 
           <OrderDialog

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo.png";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
   AppBar,
   Toolbar,
@@ -15,6 +16,9 @@ import DrawerComp from "./CustomDrawer";
 import { Link, useNavigate } from "react-router-dom";
 import avatar from "../../assets/avatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import { styled } from "@mui/system";
 
 const tabStyles = {
   textTransform: "none",
@@ -43,12 +47,20 @@ const indicatorStyles = {
   marginLeft: "3%",
 };
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    border: `2px solid black`,
+    padding: "0 4px",
+    backgroundColor: "#bc8669",
+    color: "#ffffff",
+    fontSize: "0.7rem",
+  },
+}));
+
 const PAGES = [
   { label: "Home", path: "/" },
   { label: "Shop Artwork", path: "/artworks" },
-  { label: "Workshop", path: "/workshops" },
-  { label: "About Us", path: "/aboutUs" },
-  { label: "Contact Us", path: "/contactUs" },
+  // { label: "Workshop", path: "/workshops" },
 ];
 
 export default function NavBar({
@@ -64,7 +76,10 @@ export default function NavBar({
       ? [{ label: "Dashboard", path: "/dashboard" }]
       : []),
     ...(userData && userData.role === "Artist"
-      ? [{ label: "My Artworks", path: "/my-artworks" }]
+      ? [
+          { label: "My Artworks", path: "/my-artworks" },
+          { label: "Create Artwork", path: "/create-artwork" },
+        ]
       : []),
   ];
 
@@ -81,15 +96,17 @@ export default function NavBar({
     navigate("/signup");
   };
 
-  // Logout feature (apply later)
+  // Logout feature
   function logOutHandler() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setUserData(null);
     navigate("/home");
     setValue(0);
+    localStorage.clear();
     // setUserData(null) => in profile or app
   }
+  const [cartCount, setCartCount] = useState(0); // didnt implement yet
 
   return (
     <AppBar sx={{ background: "#F2E9E4" }}>
@@ -109,6 +126,8 @@ export default function NavBar({
                   isAuthenticated={isAuthenticated}
                   logOutHandler={logOutHandler}
                   userData={userData}
+                  StyledBadge={StyledBadge}
+                  cartCount={cartCount}
                 />
               </Box>
             </Box>
@@ -140,6 +159,37 @@ export default function NavBar({
             <Box marginLeft="auto">
               {isAuthenticated ? (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {userData.role === "Customer" && (
+                    <IconButton
+                      aria-label="cart"
+                      onClick={() => {
+                        navigate("cart");
+                      }}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "transparent",
+                        },
+                      }}
+                    >
+                      <StyledBadge
+                        badgeContent={cartCount}
+                        sx={{
+                          "& .MuiBadge-dot": {
+                            backgroundColor: "#603813",
+                            color: "#ffffff",
+                          },
+                        }}
+                      >
+                        <ShoppingCartIcon
+                          style={{
+                            color: "#603813",
+                            fontSize: "2.7rem",
+                            marginRight: "10px",
+                          }}
+                        />
+                      </StyledBadge>
+                    </IconButton>
+                  )}
                   <Link to="profile">
                     <Avatar
                       alt="user icon"

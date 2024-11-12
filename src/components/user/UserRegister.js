@@ -6,9 +6,13 @@ import {
   Typography,
   Paper,
   Alert,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { createItem } from "../../api";
 
 export default function UserRegister() {
   const [userRegister, setUserRegister] = useState({
@@ -16,6 +20,7 @@ export default function UserRegister() {
     phoneNumber: "",
     email: "",
     password: "",
+    role: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -23,23 +28,24 @@ export default function UserRegister() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setUserRegister({ ...userRegister, [name]: value });
+    setUserRegister({
+      ...userRegister,
+      [name]: name === "email" ? value.toLowerCase() : value, // Force email to lowercase
+    });
   }
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const userUrl = "http://localhost:5125/api/v1/users/signup";
-    axios
-      .post(userUrl, userRegister)
+    createItem("/users/signup", userRegister)
       .then((response) => {
-        if (response.status === 200) {
-          setSuccess("Registration successful!"); // didn't implement yet
-          // Reset fields
+        if (response.status === 201) {
+          setSuccess("Registration successful!");
           setUserRegister({
             name: "",
             phoneNumber: "",
             email: "",
             password: "",
+            role: "",
           });
           setError("");
           navigate("/signin");
@@ -48,9 +54,9 @@ export default function UserRegister() {
       .catch((error) => {
         console.log(error.response.data);
         if (error.response?.data?.errors) {
-          const firstError = Object.values(error.response.data.errors)[0]; // Get the first array of errors
-          const formattedError = firstError.join(" and "); // Join messages with " and "
-          setError(formattedError); // Set the formatted error message
+          const firstError = Object.values(error.response.data.errors)[0];
+          const formattedError = firstError.join(" and ");
+          setError(formattedError);
         } else if (typeof error.response.data === "string") {
           setError(error.response.data);
         } else {
@@ -131,6 +137,18 @@ export default function UserRegister() {
           value={userRegister.password}
           onChange={handleChange}
         />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Role</InputLabel>
+          <Select
+            label="Role"
+            name="role"
+            value={userRegister.role}
+            onChange={handleChange}
+          >
+            <MenuItem value="Customer">User</MenuItem>
+            <MenuItem value="Artist">Artist</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           type="submit"
           variant="contained"
