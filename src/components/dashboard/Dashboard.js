@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
-import axios from "axios";
 import ArtworkTable from "../../components/artistArtworks/ArtworkTable";
 import ArtworkDialog from "../artistArtworks/ArtworkDialog";
 import UserTable from "./user/UserTable";
 import UserDialog from "./user/UserDialog";
 import OrderTable from "./order/OrderTable";
 import OrderDialog from "./order/OrderDialog";
-
-const API_URL = "http://localhost:5125/api/v1";
+import { fetchItems, updateItem, deleteItem } from "../../api";
 
 const Dashboard = () => {
   const [items, setItems] = useState([]); // This will store Artworks, Users, or Orders
@@ -33,17 +31,12 @@ const Dashboard = () => {
   };
 
   // Reusable Fetch Function
-  const fetchItems = async (section) => {
-    const token = localStorage.getItem("token");
+  const loadItems = async (section) => {
     try {
-      const response = await axios.get(`${API_URL}/${section}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetchItems(`${section}`);
       if (section === "users" || section === "orders") {
-        console.log(response);
         setItems(response.data);
       } else {
-        console.log(response);
         setItems(response.data[section]);
       }
     } catch (error) {
@@ -87,17 +80,10 @@ const Dashboard = () => {
       email: newItem.email,
     };
 
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
     setLoadingSave(true);
 
     try {
-      const response = await axios.patch(
-        `${API_URL}/users/${newItem.id}`,
-        itemToSend,
-        { headers }
-      );
-
+      const response = await updateItem("users", newItem.id, itemToSend);
       if (response.status === 204) {
         setItems((prevItems) =>
           prevItems.map((user) =>
@@ -112,6 +98,7 @@ const Dashboard = () => {
       setLoadingSave(false);
     }
   };
+
   // order
   const handleSaveOrder = async () => {
     let itemToSend = {
@@ -130,18 +117,10 @@ const Dashboard = () => {
         price: detail.price,
       })),
     };
-
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
     setLoadingSave(true);
 
     try {
-      const response = await axios.patch(
-        `${API_URL}/orders/${newItem.id}`,
-        itemToSend,
-        { headers }
-      );
-
+      const response = await updateItem("orders", newItem.id, itemToSend);
       if (response.status === 204) {
         setItems((prevItems) =>
           prevItems.map((order) =>
@@ -149,7 +128,6 @@ const Dashboard = () => {
           )
         );
       }
-
       handleCloseDialog();
     } catch (error) {
       handleError(error);
@@ -160,10 +138,8 @@ const Dashboard = () => {
 
   // Reusable Delete Function
   const handleDeleteItem = async (section, id) => {
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
     try {
-      await axios.delete(`${API_URL}/${section}/${id}`, { headers });
+      await deleteItem(section, id);
       setItems((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       handleError(error);
@@ -192,8 +168,7 @@ const Dashboard = () => {
 
   // Categories (Artworks only)
   const getCategories = () => {
-    axios
-      .get("http://localhost:5125/api/v1/categories")
+    fetchItems("categories")
       .then((response) => {
         setCategories(response.data);
       })
@@ -243,20 +218,16 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const loadItems = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
+      await loadItems(activeSection);
       if (activeSection === "artworks") {
-        await fetchItems("artworks");
         getCategories();
-      } else if (activeSection === "users") {
-        await fetchItems("users");
-      } else if (activeSection === "orders") {
-        await fetchItems("orders");
       }
       setIsLoading(false);
+      console.log(items);
     };
-
-    loadItems();
+    fetchData();
   }, [activeSection]);
 
   return (

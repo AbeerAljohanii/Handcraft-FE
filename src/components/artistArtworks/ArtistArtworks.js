@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Typography, CircularProgress } from "@mui/material";
-import axios from "axios";
 import ArtworkTable from "./ArtworkTable";
 import ArtworkDialog from "./ArtworkDialog";
 import { fetchItems, createItem, updateItem, deleteItem } from "../../api";
@@ -24,28 +23,22 @@ const ArtistArtworks = () => {
     }
   };
 
-  const getCategories = () => {
-    axios
-      .get("http://localhost:5125/api/v1/categories")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+  const getCategories = async () => {
+    try {
+      const response = await fetchItems("/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/my-artworks`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log(response.data);
+        const response = await fetchItems("/artworks/my-artworks");
         setArtworks(response.data);
       } catch (error) {
-        handleError(error);
+        console.error(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -99,13 +92,11 @@ const ArtistArtworks = () => {
   };
 
   const handleDeleteArtwork = async (id) => {
-    const token = localStorage.getItem("token");
-    const headers = { Authorization: `Bearer ${token}` };
     try {
-      await axios.delete(`${API_URL}/${id}`, { headers });
+      await deleteItem("/artworks", id);
       setArtworks((prev) => prev.filter((art) => art.id !== id));
     } catch (error) {
-      handleError(error);
+      console.error("Error deleting artwork:", error.message);
     }
   };
 

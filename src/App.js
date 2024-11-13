@@ -5,7 +5,6 @@ import HomePage from "./pages/HomePage";
 import Artworks from "./components/artworks/Artworks";
 import ArtworkDetail from "./components/artworkDetail/ArtworkDetails";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import UserLogin from "./components/user/UserLogin";
 import UserRegister from "./components/user/UserRegister";
 import UserProfile from "./components/user/UserProfile";
@@ -73,8 +72,7 @@ function App() {
 
   function getData() {
     setLoading(true);
-    axios
-      .get(getUrl(userInput))
+    fetchItems(getUrl(userInput))
       .then((response) => {
         const fetchedArtworks = response.data.artworks;
         const dynamicMaxPrice =
@@ -118,13 +116,7 @@ function App() {
 
   function getUserData() {
     setIsUserDataLoading(true);
-    const token = localStorage.getItem("token");
-    axios
-      .get("http://localhost:5125/api/v1/users/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    fetchItems("users/profile")
       .then((response) => {
         console.log(response.data);
         setUserData(response.data);
@@ -145,13 +137,13 @@ function App() {
     setIsAuthenticated(userData ? true : false);
   }, [userData]);
 
-  if (loading) {
-    return <div> Please wait 1 second </div>;
-  }
+  // if (loading) {
+  //   return <div> Please wait 1 second </div>;
+  // }
 
-  if (error) {
-    return <div> {error.message}</div>;
-  }
+  // if (error) {
+  //   return <div> {error.message}</div>;
+  // }
 
   const router = createBrowserRouter([
     {
@@ -190,7 +182,7 @@ function App() {
         },
         {
           path: "artworks/:artworkId",
-          element: <ArtworkDetail userData={userData}/>,
+          element: <ArtworkDetail userData={userData} />,
         },
         {
           path: "home",

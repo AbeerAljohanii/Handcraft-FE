@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
@@ -13,7 +13,7 @@ import {
   Avatar,
 } from "@mui/material";
 import DrawerComp from "./CustomDrawer";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import avatar from "../../assets/avatar.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
@@ -87,6 +87,14 @@ export default function NavBar({
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("lg"));
   const navigate = useNavigate();
+  const location = useLocation();
+  // Update the tab value based on the current location
+  useEffect(() => {
+    const currentPage = pagesWithRole.findIndex(
+      (page) => page.path === location.pathname
+    );
+    setValue(currentPage === -1 ? null : currentPage);
+  }, [location, pagesWithRole]);
 
   const handleSignIn = () => {
     navigate("/signin");
@@ -112,26 +120,24 @@ export default function NavBar({
     <AppBar sx={{ background: "#F2E9E4" }}>
       <Toolbar>
         {isMatch ? (
-          <>
-            <Box display="flex" alignItems="center" width="100%">
-              <img
-                src={logo}
-                alt="Logo"
-                style={{
-                  height: "60px",
-                }}
+          <Box display="flex" alignItems="center" width="100%">
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                height: "60px",
+              }}
+            />
+            <Box marginLeft="auto">
+              <DrawerComp
+                isAuthenticated={isAuthenticated}
+                logOutHandler={logOutHandler}
+                userData={userData}
+                StyledBadge={StyledBadge}
+                cartCount={cartCount}
               />
-              <Box marginLeft="auto">
-                <DrawerComp
-                  isAuthenticated={isAuthenticated}
-                  logOutHandler={logOutHandler}
-                  userData={userData}
-                  StyledBadge={StyledBadge}
-                  cartCount={cartCount}
-                />
-              </Box>
             </Box>
-          </>
+          </Box>
         ) : (
           <Box display="flex" alignItems="center" width="100%">
             <img

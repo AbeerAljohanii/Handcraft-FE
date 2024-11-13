@@ -154,7 +154,7 @@ export default function UserRegister() {
           variant="contained"
           color="primary"
           fullWidth
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2, backgroundColor: "#603813" }}
         >
           Sign Up
         </Button>

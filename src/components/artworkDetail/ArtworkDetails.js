@@ -7,6 +7,10 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { fetchItemById } from "../../api";
@@ -74,7 +78,7 @@ export default function ArtworkDetails({ userData }) {
       p={4}
       maxWidth="600px"
       margin="0 auto"
-      paddingTop="7rem"
+      paddingTop="9rem"
     >
       {/* Snackbar for alerts */}
       <Snackbar
@@ -104,53 +108,60 @@ export default function ArtworkDetails({ userData }) {
 
       {/* Show artwork details if available */}
       {!loading && !error && artworkDetail ? (
-        <>
-          <Typography variant="h4" mt={2} mb={2} color="#054C42">
-            {artworkDetail.title}
-          </Typography>
-          <Box
+        <Card
+          sx={{
+            maxWidth: 600,
+            boxShadow: `0px 4px 8px 0px rgba(96, 56, 19, 0.4)`,
+          }}
+        >
+          <CardMedia
             component="img"
-            src={artworkDetail.artworkUrl}
+            height="400"
+            image={artworkDetail.artworkUrl}
             alt={artworkDetail.title}
-            width="100%"
-            maxHeight="400px"
-            sx={{ objectFit: "cover", borderRadius: "8px" }}
+            sx={{ objectFit: "cover" }}
           />
-          <Typography variant="body1" mt={2} mb={1} color="text.secondary">
-            {artworkDetail.description}
-          </Typography>
-          <Typography variant="h6" mt={1}>
-            Price: {artworkDetail.price} SR
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mt={1}>
-            Category: {artworkDetail.category?.categoryName}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mt={1}>
-            Artist: {artworkDetail.user?.name}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mt={1}>
-            Quantity: {artworkDetail.quantity}
-          </Typography>
-
-          {userData.role === "Customer" && (
-            <Button
-              variant="contained"
-              startIcon={<ShoppingCartIcon />}
-              onClick={addToCart}
-              sx={{
-                backgroundColor: "#054C42",
-                color: "#fff",
-                fontWeight: "bold",
-                mt: 3,
-                width: "100%",
-                py: 1,
-                fontSize: "1rem",
-              }}
-            >
-              Add to Basket
-            </Button>
-          )}
-        </>
+          <CardContent>
+            <Typography variant="h4" color="#054C42" gutterBottom>
+              {artworkDetail.title}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              {artworkDetail.description}
+            </Typography>
+            <Typography variant="h6" color="primary">
+              Price: {artworkDetail.price} SR
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mt={1}>
+              Category: {artworkDetail.category?.categoryName}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mt={1}>
+              Artist: {artworkDetail.user?.name}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mt={1}>
+              Quantity: {artworkDetail.quantity}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            {userData && userData.role === "Customer" && (
+              <Button
+                variant="contained"
+                startIcon={<ShoppingCartIcon />}
+                onClick={addToCart}
+                sx={{
+                  backgroundColor: "#054C42",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  mt: 2,
+                  width: "100%",
+                  py: 1,
+                  fontSize: "1rem",
+                }}
+              >
+                Add to Basket
+              </Button>
+            )}
+          </CardActions>
+        </Card>
       ) : (
         !loading &&
         !error && (

@@ -7,8 +7,8 @@ import {
   Paper,
   Alert,
 } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { createItem } from "../../api";
 
 export default function UserLogin({ getUserData }) {
   const [userLogin, setuserLogin] = useState({
@@ -29,9 +29,7 @@ export default function UserLogin({ getUserData }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const userUrl = "http://localhost:5125/api/v1/users/signin";
-    axios
-      .post(userUrl, userLogin)
+    createItem("/users/signin", userLogin)
       .then((response) => {
         if (response.status === 200) {
           setSuccess("Login successful!"); // didn't implement yet
@@ -122,9 +120,8 @@ export default function UserLogin({ getUserData }) {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
           fullWidth
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2, backgroundColor: "#603813" }}
         >
           Login
         </Button>
@@ -136,7 +133,7 @@ export default function UserLogin({ getUserData }) {
           sx={{
             textDecoration: "underline",
             cursor: "pointer",
-            color: "primary.main",
+            color: "#603813",
           }}
           onClick={() => navigate("/signup")}
         >

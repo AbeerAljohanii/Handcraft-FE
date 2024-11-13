@@ -15,7 +15,7 @@ export default function OrderConfirmation() {
         minHeight: "100vh",
         background: "linear-gradient(135deg, #603813, #A5978B, #054C42)",
         textAlign: "center",
-        paddingTop: "8rem",
+        paddingTop: "3rem",
         paddingBottom: "5rem",
         position: "relative",
       }}

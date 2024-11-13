@@ -22,10 +22,13 @@ export default function Artworks({
 }) {
   const filteredArtworkList =
     category === "All"
-      ? artworkList
-      : artworkList.filter(
-          (artwork) => artwork.category?.categoryName === category
-        );
+      ? artworkList.filter((artwork) => artwork.quantity > 0) // Exclude artworks with 0 quantity
+      : artworkList.filter((artwork) => {
+          console.log(artwork.category?.categoryName); // Log categoryName for debugging
+          return (
+            artwork.category?.categoryName === category && artwork.quantity > 0
+          );
+        });
 
   return (
     <Box
