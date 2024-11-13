@@ -29,16 +29,15 @@ export default function ArtworkDetails({ userData }) {
   const [cartList, setCartList] = useState(getCartList);
 
   function fetchArtworkDetail() {
-    axios
-      .get(ArtworkDetailUrl)
+    fetchItemById(`artworks`, artworkId)
       .then((response) => {
         setArtworkDetail(response.data);
-        setLoading(false);
       })
-
       .catch((error) => {
-        setError("Error");
-        setLoading(true);
+        setError(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
