@@ -53,10 +53,10 @@ function App() {
   let pageNumber = page;
 
   function getUrl(userInput) {
-    let artworkUrl = `http://localhost:5125/api/v1/artworks`;
+    let artworkUrl = `https://handcraft-be.onrender.com/api/v1/artworks`;
 
     if (!isFirstRequest) {
-      artworkUrl = `http://localhost:5125/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&lowPrice=${minPrice}&highPrice=${maxPrice}`;
+      artworkUrl = `https://handcraft-be.onrender.com/api/v1/artworks?pageNumber=${pageNumber}&pageSize=${pageSize}&lowPrice=${minPrice}&highPrice=${maxPrice}`;
     }
 
     if (userInput) {

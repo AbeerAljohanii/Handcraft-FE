@@ -2,7 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const API_URL = "http://localhost:5125/api/v1";
+const API_URL = "https://handcraft-be.onrender.com/api/v1";
 
 const api = axios.create({
   baseURL: API_URL,

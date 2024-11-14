@@ -42,18 +42,25 @@ export default function UserProfile({ userData, setUserData }) {
 
     const token = localStorage.getItem("token");
     axios
-      .patch("http://localhost:5125/api/v1/users/profile", updatedFields, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .patch(
+        "https://handcraft-be.onrender.com/api/v1/users/profile",
+        updatedFields,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         if (response.status === 204) {
-          return axios.get("http://localhost:5125/api/v1/users/profile", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          return axios.get(
+            "https://handcraft-be.onrender.com/api/v1/users/profile",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
         }
       })
       .then((updatedUserData) => {
