@@ -1,8 +1,6 @@
-# Project: Frontend for E-commerce Website
+# Project: Frontend for E-commerce Website ( HandCraft )
 
-This project is a frontend for an e-commerce website, developed using modern web technologies. It provides an interactive platform for users to browse and purchase products, while also offering a management dashboard for administrators to handle products, users, and orders. The project is built with a focus on a smooth and intuitive user experience, with added functionalities for searching, filtering, and managing products.
-
-***Deadline: 14/11/2024***
+This project is a frontend for HandCraft, developed using modern web technologies. It provides an interactive platform for users to browse and purchase products, while also offering a management dashboard for administrators to handle products, users, and orders. The project is built with a focus on a smooth and intuitive user experience, with added functionalities for searching, filtering, and managing products.
 
 ### Level 1: Basic Requirements
 
@@ -41,8 +39,6 @@ This project is a frontend for an e-commerce website, developed using modern web
 
 - Messages, show loading, success, and error messages (e.g., when loading products list or adding new product)
 - Implement pagination feature
-- Create a Profile Page (only available if user logs in), implement editing user profile feature (user can change first name, last name)
+- Create a Profile Page (only available if user logs in), implement editing user profile feature (user can change first name)
 
-`Please note that the bonus requirements and reviews are optional and can be completed if you have additional time and advanced skills.`
 
-Happy coding!
