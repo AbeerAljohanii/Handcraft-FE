@@ -41,4 +41,9 @@ This project is a frontend for HandCraft, developed using modern web technologie
 - Implement pagination feature
 - Create a Profile Page (only available if user logs in), implement editing user profile feature (user can change first name)
 
+## 🌐 Deployment
+The application is deployed and can be accessed at:  [https://handcraft-be.onrender.com](https://handcraft-fe.onrender.com)
+
+
+
 
